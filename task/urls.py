@@ -6,4 +6,5 @@ urlpatterns = [
     path('detail/<int:pk>', views.task_detail),
     
     
+    
 ]
