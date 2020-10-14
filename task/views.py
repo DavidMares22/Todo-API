@@ -5,14 +5,18 @@ from .serializers import TaskSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser 
+from .pagination import CustomPagination
 
 
 @api_view(['GET','POST'])
 def task_list(request):
     if request.method == 'GET':
+        paginator = CustomPagination()
+        paginator.page_size = 5
         tasks = Task.objects.all()
-        serializer = TaskSerializer(tasks, many=True)
-        return Response(serializer.data)
+        result_page = paginator.paginate_queryset(tasks, request)
+        serializer = TaskSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
     
     if request.method == 'POST':
         serializer = TaskSerializer(data=request.data)
